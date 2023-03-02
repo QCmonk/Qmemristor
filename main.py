@@ -85,7 +85,7 @@ init = RandomUniform(minval=-1, maxval=1, seed=None)
 # Section 2: Apply resevoir compute layer to quantum data encoding 
 # ------------------------------------------------------------
 
-if task is "witness":
+if task == "witness":
 	# generate random entangled and seperable states
 	data_train, y_train, data_test, y_test = entanglement_gen(dim=10, num=5000, partition=0.5, embed_dim=dim)
 
@@ -107,7 +107,7 @@ else:
 	else:
 
 		# load MNIST data
-		(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+		(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
 		x_train, y_train = filter_36(x_train, y_train)
 		x_test, y_test = filter_36(x_test, y_test)
@@ -122,11 +122,11 @@ else:
 
 		# remove conflicting training items
 		data_train, y_train = remove_contradicting(data_train, y_train)
-		data_train, y_train = remove_contradicting(data_test, y_test)
+		data_test, y_test = remove_contradicting(data_test, y_test)
 
 		# apply encoding of classical data to quantum state space
 		encoder = QEncoder(modes=modes, photons=photons, density=True)
-		#data_train = encoder.encode(data=data_train, method="amplitude", normalise=True)
+		data_train = encoder.encode(data=data_train, method="amplitude", normalise=True)
 		data_test = encoder.encode(data=data_test, method="amplitude", normalise=True)
 
 		#data_train = eigen_encode_map(data_train, modes, photons)
@@ -175,17 +175,17 @@ output = Dense(units=20)(output)
 output = Dense(units=3, activation="softmax",  use_bias=True)(output)
 
 # define standard optimiser
-opt = optimizers.Adam(lr=init_lr)
+opt = optimizers.Adam(learning_rate=init_lr)
 
 # define loss function
 loss = tf.keras.losses.CategoricalCrossentropy(
-				    from_logits=True,
+				    from_logits=False,
 				    label_smoothing=0,
 				    reduction="auto",
 				    name="categorical_crossentropy")
 
 # define the model
-model = Model(inputs=input_state, output=output, name="Optical_Resevoir_Compute_Network")
+model = Model(inputs=input_state, outputs=output, name="Optical_Resevoir_Compute_Network")
 
 # ------------------------------------------------------------
 # Section 4: Model compilation and training
