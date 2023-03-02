@@ -179,7 +179,7 @@ opt = optimizers.Adam(learning_rate=init_lr)
 
 # define loss function
 loss = tf.keras.losses.CategoricalCrossentropy(
-				    from_logits=True,
+				    from_logits=False,
 				    label_smoothing=0,
 				    reduction="auto",
 				    name="categorical_crossentropy")
